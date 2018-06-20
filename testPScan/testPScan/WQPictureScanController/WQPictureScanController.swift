@@ -27,60 +27,41 @@ class WQPictureScanController: UIViewController {
             self.setUpNavTitle()
         }
         
-        let height = self.view.bounds.height - (self.navigationController?.navigationBar.frame.height ?? 0)
-        let width = self.view.frame.width
-        //设置布局
-//        let layout = UICollectionViewFlowLayout()
-//        layout.scrollDirection = UICollectionViewScrollDirection.horizontal
-//        layout.itemSize = CGSize.init(width: width, height: height)
-//        layout.minimumLineSpacing = 0
-//        layout.minimumInteritemSpacing = 0
         
-        
-        
-        //初始化collection
-//        self.collectionView = UICollectionView.init(frame: CGRect.init(x: 0, y: 0, width: width, height: height), collectionViewLayout: layout)
-////        self.collectionView.backgroundColor = UIColor.red
-//        self.collectionView.delegate = self
-//        self.collectionView.dataSource = self
-//        self.collectionView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: 0)
-//        self.collectionView.reloadData()
-//        self.collectionView.isPagingEnabled = true
-//        self.collectionView.backgroundColor = UIColor.white
-//        self.view.addSubview(self.collectionView)
         //注册cell
         collectionView.register(UINib.init(nibName: cellId, bundle: Bundle.main), forCellWithReuseIdentifier: cellId)
         
-        //设置偏移量
+        //设置布局
+        let height = UIScreen.main.bounds.height - (self.navigationController?.navigationBar.frame.height ?? 0)
+        let width = UIScreen.main.bounds.width
         
-//        self.collectionView.scrollToItem(at: IndexPath.init(row: currentIndex-1, section: 0), at: UICollectionViewScrollPosition.top, animated: false)
-//        self.collectionView.setContentOffset(CGPoint.init(x: 200, y: 0), animated: false)
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = UICollectionViewScrollDirection.horizontal
+        layout.itemSize = CGSize.init(width: width, height: height)
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+        
+        self.collectionView.setCollectionViewLayout(layout, animated: false)
+        
+        self.collectionView.reloadData()
+
+        self.collectionView.layoutIfNeeded()
+        self.collectionView.scrollToItem(at: IndexPath.init(row: currentIndex, section: 0), at: UICollectionViewScrollPosition.left, animated: true)
+        
+        
+
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = UICollectionViewScrollDirection.horizontal
-        layout.itemSize = CGSize.init(width: self.view.frame.width, height: self.view.frame.height)
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
-        
-        self.collectionView.setCollectionViewLayout(layout, animated: true) { (bool) in
-            
-        }
-        
-        self.collectionView.scrollToItem(at: IndexPath.init(row: currentIndex, section: 0), at: UICollectionViewScrollPosition.left, animated: false)
-    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-
+    
     func setUpNavTitle() {
         self.navigationItem.title = "\(currentIndex+1)/\(sourcePictures.count)"
     }
@@ -104,7 +85,10 @@ extension WQPictureScanController: UICollectionViewDelegate, UICollectionViewDat
         cell.scrollView.delegate = self
         self.imageLoad?(cell.imageView, indexPath.row, {
 //            cell.contentIV.image = UIImage.init(named: sourcePictures[indexPath.row])
-            
+            if(cell.imageView.image == nil)
+            {
+                return;
+            }
             let width = collectionView.frame.width
             let height = width/cell.imageView.image!.size.width * cell.imageView.image!.size.height
             cell.imageView.frame = CGRect.init(x: 0, y: 0, width: width, height: height)
